@@ -27,7 +27,7 @@ def proxy():
         return str(e), 500
     
 @app.route('/proxy-stream', methods=['POST'])
-def proxy():
+def proxy_stream():
 
     data = request.get_json()
     url = data.get('url')  
