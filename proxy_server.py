@@ -1,5 +1,7 @@
 from flask import Flask, request, Response, jsonify
 import requests
+import io
+import PyPDF2
 
 app = Flask(__name__)
 
@@ -41,9 +43,19 @@ def proxy_stream():
         response = requests.get(url,headers=headers,timeout=30,stream=True)
         print(url)
         # print(response.text)
+
+        # Using PyPDF2 to read the PDF content
+        pdf_file = io.BytesIO(response.content)
+        pdf_reader = PyPDF2.PdfReader(pdf_file)
+        num_pages = len(pdf_reader.pages)
+
+        text = ""
+        for page_num in range(num_pages):
+            page = pdf_reader.pages[page_num]
+            text += page.extract_text()
         
         # Return the content of the response
-        return jsonify({"content": response.content, "status_code": response.status_code})
+        return jsonify({"num_pages": num_pages, "text": text, "status_code": response.status_code})
     except requests.exceptions.RequestException as e:
         # Handle any errors that occur during the request
         print(e)
