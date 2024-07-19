@@ -60,7 +60,7 @@ def proxy_stream():
         
         # Return the content of the response
         return jsonify({"num_pages": num_pages, "text": text, "status_code": response.status_code})
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         # Handle any errors that occur during the request
         print(e)
         return str(e), 500
