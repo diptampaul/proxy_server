@@ -33,6 +33,7 @@ def proxy_stream():
 
     data = request.get_json()
     url = data.get('url')  
+    page_count = data.get('page_count', None)
     headers = data.get('headers')
 
     if not url:
@@ -47,7 +48,10 @@ def proxy_stream():
         # Using PyPDF2 to read the PDF content
         pdf_file = io.BytesIO(response.content)
         pdf_reader = PyPDF2.PdfReader(pdf_file)
-        num_pages = len(pdf_reader.pages)
+        if page_count != None:
+            num_pages = min(int(page_count), len(pdf_reader.pages))
+        else:
+            num_pages = len(pdf_reader.pages)
 
         text = ""
         for page_num in range(num_pages):
