@@ -61,7 +61,7 @@ def get_hash():
     except requests.exceptions.RequestException as e:
         # Handle any errors that occur during the request
         print(e)
-        return jsonify({"hash": "", "status_code": 500})
+        return str(e), 500
     
 @app.route('/proxy-stream', methods=['POST'])
 def proxy_stream():
