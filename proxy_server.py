@@ -1,6 +1,7 @@
 from flask import Flask, request, Response, jsonify
 import requests
 import io
+import hashlib
 import PyPDF2
 
 app = Flask(__name__)
@@ -17,7 +18,7 @@ def proxy():
     
     try:
         # Send a GET request to the URL
-        response = requests.get(url,headers=headers)
+        response = requests.get(url,headers=headers,timeout=30)
         print(url)
         # print(response.text)
         
@@ -27,6 +28,40 @@ def proxy():
         # Handle any errors that occur during the request
         print(e)
         return str(e), 500
+    
+@app.route('/get-hash', methods=['POST'])
+def proxy():
+
+    data = request.get_json()
+    url = data.get('url')  
+    headers = data.get('headers')
+    try:
+        algorithm = data.get('headers')
+        buffer_size = data.get('headers')
+    except:
+        algorithm = "sha256"
+        buffer_size = 8192
+
+    if not url:
+        return "No URL provided", 400
+    
+    try:
+        hash_function = hashlib.new(algorithm)
+        # Fetch the file from the URL in chunks and update the hash
+        with requests.get(url, headers=headers, timeout=30, stream=True) as response:
+            # Raise an exception for bad responses
+            response.raise_for_status()
+
+            for chunk in response.iter_content(chunk_size=buffer_size):
+                if chunk:
+                    hash_function.update(chunk)
+
+        # Return the hexadecimal representation of the hash
+        return jsonify({"hash": hash_function.hexdigest(), "status_code": response.status_code})
+    except requests.exceptions.RequestException as e:
+        # Handle any errors that occur during the request
+        print(e)
+        return jsonify({"hash": "", "status_code": 500})
     
 @app.route('/proxy-stream', methods=['POST'])
 def proxy_stream():
