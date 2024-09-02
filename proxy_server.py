@@ -36,8 +36,8 @@ def get_hash():
     url = data.get('url')  
     headers = data.get('headers')
     try:
-        algorithm = data.get('headers')
-        buffer_size = data.get('headers')
+        algorithm = data.get('algorithm')
+        buffer_size = data.get('buffer_size')
     except:
         algorithm = "sha256"
         buffer_size = 8192
