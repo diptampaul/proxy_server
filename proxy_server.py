@@ -3,6 +3,7 @@ import requests
 import io
 import hashlib
 import PyPDF2
+import base64
 
 app = Flask(__name__)
 
@@ -116,9 +117,12 @@ def proxy_content():
         response = requests.get(url,headers=headers,timeout=30)
         print(url)
         # print(response.text)
+
+        # Encode the content in base64
+        encoded_content = base64.b64encode(response.content).decode('utf-8')
         
         # Return the content of the response
-        return jsonify({"content": response.content, "status_code": response.status_code})
+        return jsonify({"content": encoded_content, "status_code": response.status_code})
     except requests.exceptions.RequestException as e:
         # Handle any errors that occur during the request
         print(e)
