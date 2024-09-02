@@ -30,7 +30,7 @@ def proxy():
         return str(e), 500
     
 @app.route('/get-hash', methods=['POST'])
-def proxy():
+def get_hash():
 
     data = request.get_json()
     url = data.get('url')  
